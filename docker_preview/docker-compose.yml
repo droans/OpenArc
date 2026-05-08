@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  openarc:
+    image: ghcr.io/droans/openarc:bmg-preview-qwen35
+    container_name: openarc
+    privileged: true
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - ./openarc/models:/models
+      - ./openarc/config:/persist
+    ports:
+      - 28180:8000
+    restart: unless-stopped
+    environment:
+      OPENARC_API_KEY: ${OPENARC_API_KEY}
+      MODEL_PATH: "/models"
+      NEOReadDebugKeys: 1
+      OverrideGpuAddressSpace: 48
+      EnableImplicitScaling: 1
+      # Optional
+      # OPENVINO_LOG_LEVEL: 3         # Publish model properties to Docker logs
+      # OPENARC_AUTOLOAD_MODEL:       # Names of models to load on startup, space-separated

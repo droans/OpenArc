@@ -29,3 +29,4 @@ scratchpad.md
 site/
 .cache/
 scratchpad.md
+docker_preview/lib/**
