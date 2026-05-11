@@ -87,7 +87,10 @@ RUN uv pip install transformers==5.5.0 && \
 RUN uv pip install optimum==2.1.0 && \
     uv pip install "optimum-intel[openvino] @ git+https://github.com/huggingface/optimum-intel"
 
-COPY lib/${OV_GENAI_FILE} /app
+ADD --checksum=sha256:c158e86114e26d71a1af348087f76e8850688955728effb5201f46ac1f720a53 \
+     https://github.com/droans/genai_preview/releases/download/qwen35-26.05.08/openvino_genai-2026.2.0.0-cp312-cp312-linux_x86_64.whl /app
+ADD --checksum=sha256:7e98775ee7610e1ccb1e9b0bd6a1d6b041aa3e32bdac9475ebcee4ec80987d7c \
+     https://github.com/droans/genai_preview/releases/download/qwen35-26.05.08/openvino_tokenizers-2026.2.0.0-py3-none-linux_x86_64.whl /app
 COPY lib/${OV_TOKENIZERS_FILE} /app
 COPY lib/${OV_FILE} /app
 RUN uv pip install /app/${OV_FILE} /app/${OV_GENAI_FILE} /app/${OV_TOKENIZERS_FILE}
