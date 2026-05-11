@@ -2,10 +2,9 @@
 
 This image provides support for upcoming features added to OpenVINO, OpenVINO GenAI, and Optimum-Intel. Currently, support is only provided for Battlemage GPUs but likely works with other Gen12+ CPUs/GPUs. You may be able to provide your own support for older chipsets by updating the required `libze` packages.
 
-`openvino`, `openvino-genai`, `openvino-tokenizers` were built from unmerged source code. The following PRs were included when building these files:
+`openvino-genai`, and `openvino-tokenizers` were built from unmerged source code. The following branches/PRs were included when building these files:
 
-* `openvino`: https://github.com/openvinotoolkit/openvino/pull/35691
-* `openvino-genai`/`openvino-tokenizers`: https://github.com/openvinotoolkit/openvino.genai/pull/3801
+* `openvino-genai`/`openvino-tokenizers`: https://github.com/droans/genai_preview/releases/tag/qwen35-26.05.08
 
 Due to git/git-lfs limitations, these wheels are not included in the source code. However, we plan to fork the parent repositories in the near future and upload the wheels from there.
 
