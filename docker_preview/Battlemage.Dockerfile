@@ -6,9 +6,7 @@ FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-ARG OV_GENAI_FILE="openvino_genai-2026.2.0.0-cp312-cp312-linux_x86_64.whl"
-ARG OV_TOKENIZERS_FILE="openvino_tokenizers-2026.2.0.0-py3-none-linux_x86_64.whl"
-ARG OV_FILE="openvino-2026.2.0-21813-cp312-cp312-manylinux_2_39_x86_64.whl"
+ARG OV_FILE="openvino-2026.3.0-21898-cp312-cp312-manylinux_2_39_x86_64.whl"
 
 # ============================================================================
 # System Dependencies
@@ -87,25 +85,27 @@ RUN uv pip install transformers==5.5.0 && \
 RUN uv pip install optimum==2.1.0 && \
     uv pip install "optimum-intel[openvino] @ git+https://github.com/huggingface/optimum-intel"
 
-ADD --checksum=sha256:c158e86114e26d71a1af348087f76e8850688955728effb5201f46ac1f720a53 \
-     https://github.com/droans/genai_preview/releases/download/qwen35-26.05.08/openvino_genai-2026.2.0.0-cp312-cp312-linux_x86_64.whl /app
-ADD --checksum=sha256:7e98775ee7610e1ccb1e9b0bd6a1d6b041aa3e32bdac9475ebcee4ec80987d7c \
-     https://github.com/droans/genai_preview/releases/download/qwen35-26.05.08/openvino_tokenizers-2026.2.0.0-py3-none-linux_x86_64.whl /app
-COPY lib/${OV_TOKENIZERS_FILE} /app
+ADD --checksum=sha256:e8181d5786f730000c5cf6dde7bea7eaa682aeddfcacb4fe24bd4183808d8162 \
+     https://github.com/droans/genai_preview/releases/download/qwen35-26.05.12/openvino_genai-2026.3.0.0-cp312-cp312-linux_x86_64.whl /app
+ADD --checksum=sha256:379cc2e6e990f7ac88b0f4cc9c8359ed4a5ffcf251abd52b7881c562252a583e \
+     https://github.com/droans/genai_preview/releases/download/qwen35-26.05.12/openvino_tokenizers-2026.2.0.0-py3-none-linux_x86_64.whl /app
 COPY lib/${OV_FILE} /app
 RUN uv pip install /app/${OV_FILE} /app/${OV_GENAI_FILE} /app/${OV_TOKENIZERS_FILE}
 
 RUN mkdir /app/dependencies
-ADD --checksum=sha256:64e5230788e3a31e611e8d815a141b1facb91e5f0ef239233ef3f0614bfe3fd6 \
-     https://github.com/intel/intel-graphics-compiler/releases/download/v2.32.7/intel-igc-core-2_2.32.7+21184_amd64.deb /app/dependencies
-ADD --checksum=sha256:34ce5791160d87ce6d54edb558a4030858ee1dad2afb067b9c5c58d4cde774c6 \
-    https://github.com/intel/compute-runtime/releases/download/26.14.37833.4/libze-intel-gpu1_26.14.37833.4-0_amd64.deb /app/dependencies
-ADD --checksum=sha256:3c9bddbfe558279402bbeaabcf9c63b8de46b956b0ad9625415fd35dda53ad52 \
-     https://github.com/intel/intel-graphics-compiler/releases/download/v2.32.7/intel-igc-opencl-2_2.32.7+21184_amd64.deb /app/dependencies
-ADD --checksum=sha256:2e15eeb4fe9c1bba467a655967373eec6a20dd04cc7159de53c359f17ab53e41 \
-      https://github.com/intel/compute-runtime/releases/download/26.14.37833.4/intel-opencl-icd_26.14.37833.4-0_amd64.deb /app/dependencies
-ADD --checksum=sha256:9d712f71c18baee076de9961dda71e8089291e1bd0deb5d649ab5ba5de114f97 \
-      https://github.com/intel/compute-runtime/releases/download/26.14.37833.4/libigdgmm12_22.9.0_amd64.deb /app/dependencies
+ADD --checksum=sha256:0ce1e715ec5bf30b1304b42acfbda34cc514a0f616dd48c6a31973c4075d8d09 \
+     https://github.com/intel/intel-graphics-compiler/releases/download/v2.34.4/intel-igc-core-2_2.34.4+21428_amd64.deb /app/dependencies
+ADD --checksum=sha256:12b8254e6d3415c32cee9cd13943030b991d91212445c79fe1cc27176a72eca4 \
+    https://github.com/intel/compute-runtime/releases/download/26.18.38308.1/libze-intel-gpu1_26.18.38308.1-0_amd64.deb /app/dependencies
+ADD --checksum=sha256:09a71e8b6ad432ed0511b09fa4f580c1b44534a60ccb0545212507bf67dc0d1b  \
+     https://github.com/intel/intel-graphics-compiler/releases/download/v2.34.4/intel-igc-opencl-2_2.34.4+21428_amd64.deb /app/dependencies
+ADD --checksum=sha256:b2d0c924e56b3f9e5837774d68b0c67461b8633035d93ca18b1a8e3e5ead15fa \
+      https://github.com/intel/compute-runtime/releases/download/26.18.38308.1/intel-opencl-icd_26.18.38308.1-0_amd64.deb /app/dependencies
+ADD --checksum=sha256:6031a63d6e8a12ce61c14efc15f2c8e727061286e3820b8594e6d00615e04d54 \
+      https://github.com/intel/compute-runtime/releases/download/26.18.38308.1/libigdgmm12_22.10.0_amd64.deb /app/dependencies
+ADD --checksum=sha256:f36cb8a6899353c61cc7261b650f287f4a652acadaad859103bdfc51f93b6e8a \
+      https://github.com/intel/compute-runtime/releases/download/26.18.38308.1/intel-ocloc_26.18.38308.1-0_amd64.deb /app/dependencies
+
 RUN dpkg -i /app/dependencies/*.deb && rm -rf /app/dependencies
 
 # Add venv to PATH so openarc command works
