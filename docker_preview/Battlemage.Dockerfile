@@ -79,9 +79,10 @@ RUN git clone https://github.com/SearchSavior/OpenArc.git . && \
 # ============================================================================
 # Install Python dependencies with uv
 # ============================================================================
+RUN uv venv && uv pip install ./gpu-metrics
 RUN uv sync
 RUN uv pip install transformers==5.5.0 && \
-    uv pip install requests torchvision gpu-metrics
+    uv pip install requests torchvision
 RUN uv pip install optimum==2.1.0 && \
     uv pip install "optimum-intel[openvino] @ git+https://github.com/huggingface/optimum-intel"
 
