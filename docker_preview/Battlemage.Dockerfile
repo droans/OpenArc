@@ -95,7 +95,7 @@ ADD --checksum=sha256:379cc2e6e990f7ac88b0f4cc9c8359ed4a5ffcf251abd52b7881c56225
 
 # openvino
 COPY lib/${OV_FILE} /app
-RUN uv pip install /app/${OV_FILE} /app/${OV_GENAI_FILE} /app/${OV_TOKENIZERS_FILE}
+RUN uv pip install /app/*whl --no-deps
 
 RUN mkdir /app/dependencies
 ADD --checksum=sha256:0ce1e715ec5bf30b1304b42acfbda34cc514a0f616dd48c6a31973c4075d8d09 \
