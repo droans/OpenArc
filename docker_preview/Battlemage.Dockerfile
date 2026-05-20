@@ -85,10 +85,15 @@ RUN uv pip install requests torchvision transformers==5.2.0
 RUN uv pip install optimum==2.1.0 && \
     uv pip install "optimum-intel[openvino] @ git+https://github.com/huggingface/optimum-intel"
 
+# openvino-genai
 ADD --checksum=sha256:e8181d5786f730000c5cf6dde7bea7eaa682aeddfcacb4fe24bd4183808d8162 \
      https://github.com/droans/genai_preview/releases/download/qwen35-26.05.12/openvino_genai-2026.3.0.0-cp312-cp312-linux_x86_64.whl /app
+
+# openvino-tokenizers
 ADD --checksum=sha256:379cc2e6e990f7ac88b0f4cc9c8359ed4a5ffcf251abd52b7881c562252a583e \
      https://github.com/droans/genai_preview/releases/download/qwen35-26.05.12/openvino_tokenizers-2026.2.0.0-py3-none-linux_x86_64.whl /app
+
+# openvino
 COPY lib/${OV_FILE} /app
 RUN uv pip install /app/${OV_FILE} /app/${OV_GENAI_FILE} /app/${OV_TOKENIZERS_FILE}
 
