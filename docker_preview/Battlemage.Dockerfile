@@ -84,11 +84,11 @@ RUN uv pip install optimum==2.1.0 && \
     uv pip install "optimum-intel[openvino] @ git+https://github.com/huggingface/optimum-intel"
 
 ARG GENAI_REPO_URL="https://github.com/droans/genai_preview"
-ARG GENAI_TAG="qwen35-26.05.12"
+ARG GENAI_TAG="master-052026"
 ARG OV_GENAI_FILE="openvino_genai-2026.3.0.0-cp312-cp312-linux_x86_64.whl"
-ARG OV_TOKENIZERS_FILE="openvino_tokenizers-2026.2.0.0-py3-none-linux_x86_64.whl"
-ARG OV_GENAI_CHECKSUM="sha256:e8181d5786f730000c5cf6dde7bea7eaa682aeddfcacb4fe24bd4183808d8162"
-ARG OV_TOKENIZERS_CHECKSUM="sha256:379cc2e6e990f7ac88b0f4cc9c8359ed4a5ffcf251abd52b7881c562252a583e"
+ARG OV_TOKENIZERS_FILE="openvino_tokenizers-2026.3.0.0-py3-none-linux_x86_64.whl"
+ARG OV_GENAI_CHECKSUM="sha256:f821cfacee743ff3bcd637b606504f35bdaa7af8a5f3532ecb64f257e2d58314"
+ARG OV_TOKENIZERS_CHECKSUM="sha256:5a909a211634660aa136db10549a54e480392fe1423f173ef93e2a0a9b4530af"
 
 # openvino-genai
 ADD --checksum=${OV_GENAI_CHECKSUM} \
