@@ -87,15 +87,15 @@ RUN uv pip install optimum==2.1.0 && \
 
 # openvino-genai
 ADD --checksum=sha256:e8181d5786f730000c5cf6dde7bea7eaa682aeddfcacb4fe24bd4183808d8162 \
-     https://github.com/droans/genai_preview/releases/download/qwen35-26.05.12/openvino_genai-2026.3.0.0-cp312-cp312-linux_x86_64.whl /app
+     https://github.com/droans/genai_preview/releases/download/qwen35-26.05.12/openvino_genai-2026.3.0.0-cp312-cp312-linux_x86_64.whl /app/dependencies
 
 # openvino-tokenizers
 ADD --checksum=sha256:379cc2e6e990f7ac88b0f4cc9c8359ed4a5ffcf251abd52b7881c562252a583e \
-     https://github.com/droans/genai_preview/releases/download/qwen35-26.05.12/openvino_tokenizers-2026.2.0.0-py3-none-linux_x86_64.whl /app
+     https://github.com/droans/genai_preview/releases/download/qwen35-26.05.12/openvino_tokenizers-2026.2.0.0-py3-none-linux_x86_64.whl /app/dependencies
 
 # openvino
 COPY lib/${OV_FILE} /app
-RUN uv pip install /app/*whl --no-deps
+RUN uv pip install /app/dependencies/*whl --no-deps
 
 RUN mkdir /app/dependencies
 ADD --checksum=sha256:0ce1e715ec5bf30b1304b42acfbda34cc514a0f616dd48c6a31973c4075d8d09 \
