@@ -85,13 +85,20 @@ RUN uv pip install requests torchvision transformers==5.2.0
 RUN uv pip install optimum==2.1.0 && \
     uv pip install "optimum-intel[openvino] @ git+https://github.com/huggingface/optimum-intel"
 
+ARG GENAI_REPO_URL="https://github.com/droans/genai_preview"
+ARG GENAI_TAG="qwen35-26.05.12"
+ARG OV_GENAI_FILE="openvino_genai-2026.3.0.0-cp312-cp312-linux_x86_64.whl"
+ARG OV_TOKENIZERS_FILE="openvino_tokenizers-2026.2.0.0-py3-none-linux_x86_64.whl"
+ARG OV_GENAI_CHECKSUM="sha256:e8181d5786f730000c5cf6dde7bea7eaa682aeddfcacb4fe24bd4183808d8162"
+ARG OV_TOKENIZERS_CHECKSUM="sha256:379cc2e6e990f7ac88b0f4cc9c8359ed4a5ffcf251abd52b7881c562252a583e"
+
 # openvino-genai
-ADD --checksum=sha256:e8181d5786f730000c5cf6dde7bea7eaa682aeddfcacb4fe24bd4183808d8162 \
-     https://github.com/droans/genai_preview/releases/download/qwen35-26.05.12/openvino_genai-2026.3.0.0-cp312-cp312-linux_x86_64.whl /app/dependencies
+ADD --checksum=${OV_GENAI_CHECKSUM} \
+     ${GENAI_REPO_URL}/releases/download/${GENAI_TAG}/${OV_GENAI_FILE} /app/dependencies
 
 # openvino-tokenizers
-ADD --checksum=sha256:379cc2e6e990f7ac88b0f4cc9c8359ed4a5ffcf251abd52b7881c562252a583e \
-     https://github.com/droans/genai_preview/releases/download/qwen35-26.05.12/openvino_tokenizers-2026.2.0.0-py3-none-linux_x86_64.whl /app/dependencies
+ADD --checksum=${OV_TOKENIZERS_CHECKSUM} \
+     ${GENAI_REPO_URL}/releases/download/${GENAI_TAG}/${OV_TOKENIZERS_FILE} /app/dependencies
 
 # openvino
 COPY lib/${OV_FILE} /app
