@@ -6,8 +6,6 @@ FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-ARG OV_FILE="openvino-2026.3.0-21898-cp312-cp312-manylinux_2_39_x86_64.whl"
-
 # ============================================================================
 # System Dependencies
 # ============================================================================
@@ -100,8 +98,14 @@ ADD --checksum=${OV_GENAI_CHECKSUM} \
 ADD --checksum=${OV_TOKENIZERS_CHECKSUM} \
      ${GENAI_REPO_URL}/releases/download/${GENAI_TAG}/${OV_TOKENIZERS_FILE} /app/dependencies
 
-# openvino
-COPY lib/${OV_FILE} /app
+ARG OV_REPO_URL="https://github.com/droans/openvino_preview"
+ARG OV_TAG="master-052026"
+ARG OV_FILE="openvino-2026.3.0-21971-cp312-cp312-manylinux_2_39_x86_64.whl"
+ARG OV_CHECKSUM="sha256:643e311c6e5575b11a8a240b3ceb8f703d0ed9fa04ac5f877eabb14f97944a2a"
+
+     # openvino
+ADD --checksum=${OV_CHECKSUM} \
+     ${OV_REPO_URL}/releases/download/master-052026/${OV_FILE} /app/dependencies
 RUN uv pip install /app/dependencies/*whl --no-deps
 
 RUN mkdir /app/dependencies
