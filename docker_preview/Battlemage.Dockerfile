@@ -83,6 +83,8 @@ RUN uv pip install requests torchvision transformers==5.2.0
 RUN uv pip install optimum==2.1.0 && \
     uv pip install "optimum-intel[openvino] @ git+https://github.com/huggingface/optimum-intel"
 
+RUN mkdir /app/dependencies
+
 ARG GENAI_REPO_URL="https://github.com/droans/genai_preview"
 ARG GENAI_TAG="master-052026"
 ARG OV_GENAI_FILE="openvino_genai-2026.3.0.0-cp312-cp312-linux_x86_64.whl"
@@ -108,7 +110,6 @@ ADD --checksum=${OV_CHECKSUM} \
      ${OV_REPO_URL}/releases/download/master-052026/${OV_FILE} /app/dependencies
 RUN uv pip install /app/dependencies/*whl --no-deps
 
-RUN mkdir /app/dependencies
 ADD --checksum=sha256:0ce1e715ec5bf30b1304b42acfbda34cc514a0f616dd48c6a31973c4075d8d09 \
      https://github.com/intel/intel-graphics-compiler/releases/download/v2.34.4/intel-igc-core-2_2.34.4+21428_amd64.deb /app/dependencies
 ADD --checksum=sha256:12b8254e6d3415c32cee9cd13943030b991d91212445c79fe1cc27176a72eca4 \
