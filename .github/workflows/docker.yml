@@ -1,0 +1,39 @@
+on:
+  workflow_dispatch:
+    inputs:
+      checkout_ref:
+        description: Git ref to checkout
+        type: string
+        required: true
+      git_tag:
+        description: Git tag to use when labeling release ref
+        type: string
+        required: true
+      image_tag:
+        description: Tag to apply to image
+        type: string
+        required: true
+      additional_image_tag:
+        description: Additional tag to apply to image
+        type: string
+        required: false
+        default: "n/a"
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Docker image
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          ref: ${{inputs.checkout_ref}}
+      - name: Build image
+        run: |
+          docker build docker_preview/. -f docker_preview/Battlemage.Dockerfile -t ${{inputs.image_tag}}
+      - name: Build supplemental image
+        if: inputs.additional_image_tag != "n/a"
+        run: |
+          docker build docker_preview/. -f docker_preview/Battlemage.Dockerfile -t ${{inputs.additional_image_tag}}
