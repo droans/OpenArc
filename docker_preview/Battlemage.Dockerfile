@@ -75,55 +75,63 @@ RUN git clone https://github.com/SearchSavior/OpenArc.git . && \
     echo "OpenARC version: $(git describe --tags --always)"
 
 # ============================================================================
+# Install OpenVINO sources
+# ============================================================================
+RUN pip install --break-system-packages pygithub && \
+    mkdir /openvino_src && \
+    cd /openvino_src && \
+    git clone --recursive https://github.com/openvinotoolkit/openvino.git && \
+    git clone --recursive https://github.com/openvinotoolkit/openvino.genai.git && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN /openvino_src/openvino/install_build_dependencies.sh
+RUN cd /openvino_src/openvino && \
+    uv venv --python 3.12 --seed && \
+    . .venv/bin/activate && \
+    uv pip install -r src/bindings/python/wheel/requirements-dev.txt && \
+    uv pip install numpy pybind11-stubgen==2.5.5
+
+RUN cd /openvino_src/openvino && \
+    . .venv/bin/activate && \
+    cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DENABLE_PYTHON=ON \
+        -DENABLE_WHEEL=ON \
+        -DPython3_EXECUTABLE=$(which python3) \
+        -DCMAKE_CXX_FLAGS="-D_GLIBCXX_USE_CXX11_ABI=0" \
+        -DCMAKE_C_FLAGS="-D_GLIBCXX_USE_CXX11_ABI=0" \
+        -S ./ \
+        -B ./build && \
+    cd build && \
+    cmake --build ./  --parallel $(nproc) --target ie_wheel && \
+    uv pip install wheels/*.whl
+
+RUN . /openvino_src/openvino/.venv/bin/activate && \
+    uv pip install 'py-build-cmake==0.4.3' && \
+    cd /openvino_src/openvino.genai/thirdparty/openvino_tokenizers && \
+    OPENVINO_DIR=/openvino_src/openvino/.venv/lib/python3.12/site-packages/openvino/cmake \
+        pip wheel . --no-deps --no-build-isolation --wheel-dir /tmp/tokenizer_wheels && \
+    uv pip install /tmp/tokenizer_wheels/*.whl
+
+RUN . /openvino_src/openvino/.venv/bin/activate && \
+    uv pip install 'py-build-cmake==0.5.0' && \
+    cd /openvino_src/openvino.genai && \
+    OPENVINO_DIR=/openvino_src/openvino/.venv/lib/python3.12/site-packages/openvino/cmake \
+        CMAKE_CXX_FLAGS="-D_GLIBCXX_USE_CXX11_ABI=0" \
+        CMAKE_C_FLAGS="-D_GLIBCXX_USE_CXX11_ABI=0" \
+        pip wheel . --no-deps --no-build-isolation --wheel-dir /tmp/genai_wheels && \
+    uv pip install /tmp/genai_wheels/*.whl
+# ============================================================================
 # Install Python dependencies with uv
 # ============================================================================
 RUN uv venv && uv pip install ./gpu-metrics
 RUN uv sync
 RUN uv pip install requests torchvision transformers==5.2.0
 RUN uv pip install optimum==2.1.0 && \
-    uv pip install "optimum-intel[openvino] @ git+https://github.com/huggingface/optimum-intel"
-
-RUN mkdir /app/dependencies
-
-ARG GENAI_REPO_URL="https://github.com/droans/genai_preview"
-ARG GENAI_TAG="master-052026"
-ARG OV_GENAI_FILE="openvino_genai-2026.3.0.0-cp312-cp312-linux_x86_64.whl"
-ARG OV_TOKENIZERS_FILE="openvino_tokenizers-2026.3.0.0-py3-none-linux_x86_64.whl"
-ARG OV_GENAI_CHECKSUM="sha256:f821cfacee743ff3bcd637b606504f35bdaa7af8a5f3532ecb64f257e2d58314"
-ARG OV_TOKENIZERS_CHECKSUM="sha256:5a909a211634660aa136db10549a54e480392fe1423f173ef93e2a0a9b4530af"
-
-# openvino-genai
-ADD --checksum=${OV_GENAI_CHECKSUM} \
-     ${GENAI_REPO_URL}/releases/download/${GENAI_TAG}/${OV_GENAI_FILE} /app/dependencies
-
-# openvino-tokenizers
-ADD --checksum=${OV_TOKENIZERS_CHECKSUM} \
-     ${GENAI_REPO_URL}/releases/download/${GENAI_TAG}/${OV_TOKENIZERS_FILE} /app/dependencies
-
-ARG OV_REPO_URL="https://github.com/droans/openvino_preview"
-ARG OV_TAG="master-052026"
-ARG OV_FILE="openvino-2026.3.0-21971-cp312-cp312-manylinux_2_39_x86_64.whl"
-ARG OV_CHECKSUM="sha256:643e311c6e5575b11a8a240b3ceb8f703d0ed9fa04ac5f877eabb14f97944a2a"
-
-     # openvino
-ADD --checksum=${OV_CHECKSUM} \
-     ${OV_REPO_URL}/releases/download/master-052026/${OV_FILE} /app/dependencies
-RUN uv pip install /app/dependencies/*whl --no-deps
-
-ADD --checksum=sha256:0ce1e715ec5bf30b1304b42acfbda34cc514a0f616dd48c6a31973c4075d8d09 \
-     https://github.com/intel/intel-graphics-compiler/releases/download/v2.34.4/intel-igc-core-2_2.34.4+21428_amd64.deb /app/dependencies
-ADD --checksum=sha256:12b8254e6d3415c32cee9cd13943030b991d91212445c79fe1cc27176a72eca4 \
-    https://github.com/intel/compute-runtime/releases/download/26.18.38308.1/libze-intel-gpu1_26.18.38308.1-0_amd64.deb /app/dependencies
-ADD --checksum=sha256:09a71e8b6ad432ed0511b09fa4f580c1b44534a60ccb0545212507bf67dc0d1b  \
-     https://github.com/intel/intel-graphics-compiler/releases/download/v2.34.4/intel-igc-opencl-2_2.34.4+21428_amd64.deb /app/dependencies
-ADD --checksum=sha256:b2d0c924e56b3f9e5837774d68b0c67461b8633035d93ca18b1a8e3e5ead15fa \
-      https://github.com/intel/compute-runtime/releases/download/26.18.38308.1/intel-opencl-icd_26.18.38308.1-0_amd64.deb /app/dependencies
-ADD --checksum=sha256:6031a63d6e8a12ce61c14efc15f2c8e727061286e3820b8594e6d00615e04d54 \
-      https://github.com/intel/compute-runtime/releases/download/26.18.38308.1/libigdgmm12_22.10.0_amd64.deb /app/dependencies
-ADD --checksum=sha256:f36cb8a6899353c61cc7261b650f287f4a652acadaad859103bdfc51f93b6e8a \
-      https://github.com/intel/compute-runtime/releases/download/26.18.38308.1/intel-ocloc_26.18.38308.1-0_amd64.deb /app/dependencies
-
-RUN dpkg -i /app/dependencies/*.deb && rm -rf /app/dependencies
+    uv pip install "optimum-intel[openvino] @ git+https://github.com/huggingface/optimum-intel" && \
+    uv pip install /openvino_src/openvino/build/wheels/*.whl \
+        /tmp/tokenizer_wheels/*.whl \
+        /tmp/genai_wheels/*.whl
 
 # Add venv to PATH so openarc command works
 ENV PATH="/app/.venv/bin:$PATH"
