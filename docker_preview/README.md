@@ -12,14 +12,32 @@ Current support:
 * Qwen3.5/Qwen3.6
   * Confirmed Working:
     * Qwen3.5-9b
+    * Qwen3.6-27B
+    * Qwen3.6-35B-A3B
   * Should Work:
     * Qwen3.5-0.8B
     * Qwen3.5-2B
     * Qwen3.5-4B
     * Qwen3.5-27B
-    * Qwen3.6-27B
-  * Not yet working:
     * Qwen3.5-35B-A3B
+  * Not yet working:
     * Qwen3.5-122B-A10B
     * Qwen3.5-397B-A17B
-    * Qwen3.6-35B-A3B
+
+Images:
+  * **Nightly Preview**
+    * Docker image: `ghcr.io/droans/openarc:preview-nightly`
+    * Github tag: `docker-preview-nightly`
+    * Features:
+      * `openvino`, `openvino-tokenizers`, and `openvino-genai` built from source in Dockerfile
+      * Latest Compute Runtime, Intel Graphics Compiler, and Level Zero packages are installed
+    * Planned Features:
+      * Nightly automatic updates of packages
+  * **Qwen3.5/3.6 Preview**
+    * Docker image: `ghcr.io/droans/openarc:bmg-preview-qwen35`
+    * Github tag: `docker-preview`
+    * Features:
+      * OV Packages built from source in separate repository
+      * Package versions may be cherry picked
+      * Package PRs and/or branches may be cherry picked
+      * Selected Compute Runtime, Intel Graphics Compiler, and Level Zero packages are installed
