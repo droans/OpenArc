@@ -36,12 +36,8 @@ RUN wget -qO - https://repositories.intel.com/gpu/intel-graphics.key | \
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/gpu/ubuntu noble client" | \
     tee /etc/apt/sources.list.d/intel-gpu-noble.list && \
     apt-get update && apt-get install -y \
-    libze-intel-gpu1 \
     libze-intel-gpu-dev \
-    libze-intel-gpu-raytracing \
-    libze-dev \
-    libze1 \
-    intel-opencl-icd && \
+    libze-intel-gpu-raytracing && \
     rm -rf /var/lib/apt/lists/*
 
 # ============================================================================
@@ -121,6 +117,11 @@ RUN . /openvino_src/openvino/.venv/bin/activate && \
         CMAKE_C_FLAGS="-D_GLIBCXX_USE_CXX11_ABI=0" \
         pip wheel . --no-deps --no-build-isolation --wheel-dir /tmp/genai_wheels && \
     uv pip install /tmp/genai_wheels/*.whl
+
+COPY ./scripts /openvino_src/scripts
+RUN chmod +x /openvino_src/scripts/update_deb.sh && \
+    /openvino_src/scripts/update_deb.sh
+
 # ============================================================================
 # Install Python dependencies with uv
 # ============================================================================
