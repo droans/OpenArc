@@ -3,7 +3,8 @@
 # NOTE: For Battlemage or newer GPUs
 # ============================================================================
 FROM ubuntu:24.04
-
+LABEL org.opencontainers.image.source="https://github.com/droans/OpenArc/tree/docker-preview-nightly/docker_preview"
+LABEL org.opencontainers.image.documentation="https://github.com/droans/OpenArc/tree/docker-preview-nightly/docker_preview/README.md"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # ============================================================================
