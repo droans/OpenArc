@@ -1,6 +1,6 @@
-# OpenArc Preview
+# OpenArc Preview Docker Images
 
-This image provides support for upcoming features added to OpenVINO, OpenVINO GenAI, and Optimum-Intel. Currently, support is only provided for Battlemage GPUs but likely works with other Gen12+ CPUs/GPUs. You may be able to provide your own support for older chipsets by updating the required `libze` packages.
+These images provides support for upcoming features added to OpenVINO, OpenVINO GenAI, and Optimum-Intel. Currently, support is only provided for Battlemage GPUs but likely works with other Gen12+ CPUs/GPUs. You may be able to provide your own support for older chipsets by updating the required `libze` packages.
 
 `openvino-genai`, and `openvino-tokenizers` were built from unmerged source code. The following branches/PRs were included when building these files:
 
