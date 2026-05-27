@@ -3,6 +3,7 @@ import re
 import requests
 import os
 import argparse
+import shutil
 
 SAVE_DIR = "/tmp/packages"
 
@@ -65,7 +66,7 @@ def main(save_dir: str):
   print("Starting...")
   if os.path.exists(save_dir):
     print(f"Directory {save_dir} exists, deleting first.")
-    os.rmdir(save_dir)
+    shutil.rmtree(save_dir)
   os.mkdir(save_dir)
   github = Github()
   print("Getting CR Packages...")
